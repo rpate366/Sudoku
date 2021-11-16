@@ -1,2 +1,11 @@
 # Sudoku
 Personal Project. Sudoku game with auto solver.
+main.py is the main file that runs. 
+    Contains the setup and the runtime checks.
+    Also responsible for solving the board and verifying the game is winable. I would usually do this in another class, but I kept it in here for the visuals.
+
+My Socials:
+    GitHub - rpate366
+    Email - rpate366@uwo.ca
+    LinkedIn - www.linkedin.com/in/rajpatel366
+    Instagram - _patel_raj
