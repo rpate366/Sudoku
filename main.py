@@ -22,26 +22,29 @@ unit = s_width / 9
     #val is the current value to be assigned
 val = 0
 
-difficulty = "HARD"
+difficulty = "EASY"
 
 #checking validity of entry
-def validEntry(m, i, j, val):
+def validEntry(grid, row, col, val):
+    #check row and col for recurrences
     for it in range(9):
-        if m[i][it]== val:
+        if grid[row][it]== val:
             return False
-        if m[it][j]== val:
+        if grid[it][col]== val:
             return False
-    it = i//3
-    jt = j//3
-    for i in range(it * 3, it * 3 + 3):
-        for j in range (jt * 3, jt * 3 + 3):
-            if m[i][j]== val:
+    #check subgrid for recurrences
+    it = row//3
+    jt = col//3
+    for row in range(it * 3, it * 3 + 3):
+        for col in range (jt * 3, jt * 3 + 3):
+            if grid[row][col]== val:
                 return False
     return True
 
 #adding Numbers to Board, called recursively
 def addNum2Board(repetitions, t_grid):
     escape = False
+    #only escape when a valid random number is generated
     while not escape:
         value = random.randint(0,8)
         row = random.randint(0,8)
@@ -49,8 +52,10 @@ def addNum2Board(repetitions, t_grid):
 
         escape = validEntry(t_grid, row, col, value)
 
+    #add valid number to grid
     t_grid[row][col] = value
 
+    #recursion
     if (repetitions - 1 == 0):
         return t_grid
     else:
@@ -60,11 +65,13 @@ def addNum2Board(repetitions, t_grid):
 def createBoard(difficulty):
     #determining how many numbers to start with on the board, based on difficulty
     #if only python had switch statements lol
-    generate = 0
-    if (difficulty == "HARD"):
-        generate = random.randint(13,18)
+    generate = int()
+    if (difficulty == "RAND"):
+        generate = random.randint(10,50)
     elif (difficulty == "MED"):
         generate = random.randint(21,30)
+    elif (difficulty == "HARD"):
+        generate = random.randint(13,18)
     else:
         generate = random.randint(37,50)
 
@@ -82,16 +89,19 @@ def createBoard(difficulty):
 
     return addNum2Board(generate, default)
 
-#using default board for now, creating an initializing function later
+#initialize the grid depending on the difficulty
 grid = createBoard(difficulty)
 
+#system font
 font1 = pygame.font.SysFont("timesnewroman",40)
 
+#highlight selection
 def draw_highlight():
     for i in range(2):
         pygame.draw.line(screen, (255, 0, 0), (x * unit - 3, (y + i) * unit), (x * unit + unit + 3, (y + i) * unit), 7)
         pygame.draw.line(screen, (255, 0, 0), ( (x + i) * unit, y * unit ), ((x + i) * unit, y * unit + unit), 7)  
 
+#draw grid
 def draw():
     for row in range (9):
         for col in range (9):
@@ -101,7 +111,7 @@ def draw():
                 pygame.draw.rect(screen, (128, 128, 128), (row * unit, col * unit, unit + 1, unit + 1))
  
                 # init grid
-                text1 = font1.render(str(grid[row][col]), 1, (200, 0, 0))
+                text1 = font1.render(str(grid[row][col]), 1, (0, 0, 0))
                 screen.blit(text1, (row * unit + 28, col * unit + 22))
 
     # draw lines to make grid         
@@ -112,10 +122,59 @@ def draw():
             thick = 1
         pygame.draw.line(screen, (0, 0, 0), (0, row * unit), (s_width, row * unit), thick)
         pygame.draw.line(screen, (0, 0, 0), (row * unit, 0), (row * unit, s_width), thick)     
- 
+
+#solve grid using backtracking algorithm
+def solve(grid, row, col):
+    #check if box we are solving for needs solving
+    while (grid[row][col] != 0):
+        if row < 8:
+            row+= 1
+        elif row == 8 & col < 8:
+            col += 1
+            row = 0
+        elif row == 8 & col ==8:
+            return True
+
+    #allow internal actions
+    pygame.event.pump()
+
+    #solve given box
+    for val in range(1,10):
+        if validEntry(grid, row, col, val) == 1:
+            grid[row][col]= val
+            global x, y
+            x = row
+            y = col
+
+            # white color background\
+            screen.fill((255, 255, 255))
+            draw()
+            draw_highlight()
+            pygame.display.update()
+            pygame.time.delay(200)
+            if solve(grid, row, col)== 1:
+                return True
+            else:
+                grid[row][col]= 0
+         
+            # white color background\
+            screen.fill((255, 255, 255))
+            draw()
+            draw_highlight()
+            pygame.display.update()
+            pygame.time.delay(200)
+
+    return grid
+
 #running the program
 run = True
 while run:
+
+    for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                solve(grid, 0, 0)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
