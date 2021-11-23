@@ -15,14 +15,14 @@ pygame.display.set_caption("SUDOKU USING BACKTRACKING")
 
 #declaring var to setup board
     #x and y are coords
-x = 7
-y = 2
+x = 0
+y = 0
     #unit is how wide one box is
 unit = s_width / 9
     #val is the current value to be assigned
 val = 0
 
-difficulty = "EASY"
+difficulty = "HARD"
 
 #checking validity of entry
 def validEntry(grid, row, col, val):
@@ -123,48 +123,43 @@ def draw():
         pygame.draw.line(screen, (0, 0, 0), (0, row * unit), (s_width, row * unit), thick)
         pygame.draw.line(screen, (0, 0, 0), (row * unit, 0), (row * unit, s_width), thick)     
 
-#solve grid using backtracking algorithm
-def solve(grid, row, col):
-    #check if box we are solving for needs solving
-    while (grid[row][col] != 0):
-        if row < 8:
-            row+= 1
-        elif row == 8 & col < 8:
-            col += 1
-            row = 0
-        elif row == 8 & col ==8:
+def solve(grid, i, j):
+    while grid[i][j]!= 0:
+        if i<8:
+            i+= 1
+        elif i == 8 and j<8:
+            i = 0
+            j+= 1
+        elif i == 8 and j == 8:
             return True
 
-    #allow internal actions
-    pygame.event.pump()
+    pygame.event.pump()   
 
-    #solve given box
-    for val in range(1,10):
-        if validEntry(grid, row, col, val) == 1:
-            grid[row][col]= val
+    for it in range(1, 10):
+        if validEntry(grid, i, j, it)== True:
+            grid[i][j]= it
             global x, y
-            x = row
-            y = col
-
-            # white color background\
+            x = i
+            y = j
+            # reset graphics
             screen.fill((255, 255, 255))
             draw()
             draw_highlight()
             pygame.display.update()
-            pygame.time.delay(200)
-            if solve(grid, row, col)== 1:
+            #pygame.time.delay(2)
+            if solve(grid, i, j)== 1:
                 return True
             else:
-                grid[row][col]= 0
-         
-            # white color background\
+                grid[i][j]= 0
+
+            # reset graphics for backtrack
             screen.fill((255, 255, 255))
             draw()
             draw_highlight()
             pygame.display.update()
-            pygame.time.delay(200)
-
-    return grid
+            #pygame.time.delay(1)   
+            
+    return False 
 
 #running the program
 run = True
@@ -173,11 +168,16 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                solve(grid, 0, 0)
+                if solve(grid, 0, 0) == True:
+                     print("SOLVED")
+                else:
+                    print("ERROR")
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+
+    screen.fill((255, 255, 255))
     draw()
     pygame.display.update()
 
