@@ -8,4 +8,3 @@ My Socials:
     GitHub - rpate366
     Email - rpate366@uwo.ca
     LinkedIn - www.linkedin.com/in/rajpatel366
-    Instagram - _patel_raj
