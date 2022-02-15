@@ -36,8 +36,8 @@ if __name__ == "__main__":
         #val is the current value to be assigned
     val = 0
 
-    difficulty = input("Enter a difficulty (EASY, MED, HARD): ")
-
+    # difficulty = random.choice(["EASY, MED, HARD"])
+    difficulty = "HARD"
     #system font
     font1 = pygame.font.SysFont("timesnewroman",40)
 
@@ -71,7 +71,7 @@ if __name__ == "__main__":
             pygame.draw.line(screen, (0, 0, 0), (0, row * unit), (s_width, row * unit), thick)
             pygame.draw.line(screen, (0, 0, 0), (row * unit, 0), (row * unit, s_width), thick)     
 
-    #solves given grid starting from given coordinates (used in backtracking)
+    # #solves given grid starting from given coordinates (used in backtracking)
     def solve(grid, i, j):
         global prep
         while grid[i][j]!= 0:
